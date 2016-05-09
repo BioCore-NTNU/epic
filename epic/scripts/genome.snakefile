@@ -86,6 +86,6 @@ rule chromsizes:
     output: 'chromsizes/{genome}.chromsizes'
     run:
         url = CHROMSIZES_PATTERN.format(genome=wildcards.genome)
-        shell('wget -O {output}.tmp {url} && mv {output}.tmp {output}')
+        shell('wget -O - {url} | grep -v "_" > {output}.tmp && mv {output}.tmp {output}')
 
 # vim: ft=python
