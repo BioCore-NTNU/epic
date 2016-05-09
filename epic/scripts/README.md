@@ -17,6 +17,8 @@ Dry-run the workflow:
 snakemake -n -s genome.snakefile
 ```
 
+Set the $TMPDIR env variable if you want to use something other than /tmp.
+
 Run the workflow with 8 cores:
 
 ```
