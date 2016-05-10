@@ -5,9 +5,9 @@
 
 epic is a software package for finding medium to diffusely enriched domains in
 chip-seq data. It is a fast, parallel and memory-efficient implementation of the
-incredibly popular SICER algorithm. By running epic on a set of data ("ChIP") files and a set of
-control ("Input") files, epic is able to quickly identify differentially
-enriched regions.
+incredibly popular SICER algorithm. By running epic on a set of data ("ChIP")
+files and control ("Input") files, epic is able to quickly identify
+differentially enriched regions.
 
 epic is an improvement over the original SICER by being faster, more memory
 efficient, multicore, and significantly much easier to install and use.
@@ -41,6 +41,13 @@ https://github.com/endrebak/epic
 ## Changelog
 
 ```
+# 0.0.7 (06.05.16)
+- fix default value of keep duplicates (was True, now is False)
+- fix max-gap bug (max gap used was actually max-gap - 1)
+- (internal: no more functions with > 5 arguments)
+- (the difference between SICER and epic I thought was a due to a bug, was caused
+  by them having different genome versions as default)
+
 # 0.0.6 (10.04.16)
 - add script to compute the effective genome size (thanks to Heng Li for alerting me to the existence of jellyfish2)
 
@@ -127,6 +134,11 @@ See [this page](helper_scripts.md) for the various helper scripts that are a par
 * Clean up tests
 * Add paired end support
 * Add more examples of usage
+* Add bigwig output for islands
+* Improve logging messages
+* Write proper docs
+* Explain the effective genome size and test how much it matters
+* Test island threshold difference between SICER and epic on different datasets
 
 ## Usage
 
@@ -233,7 +245,3 @@ But suggestions for better names accepted. On paper I liked the epi/epic/epigene
 * [SICERpy](https://github.com/dariober/SICERpy) - a wrapper around SICER for convenience/parallelism. Stole some good ideas from there.
 * [csaw](https://github.com/LTLA/csaw) - R package. Uses an approach to island finding that complements epic very well. Requires more statistical sophistication and programming skill to use.
 * [MACS2](https://github.com/taoliu/MACS) - my preferred peak caller.
-
-#### Bug in the original SICER?
-
-I would appreciate it if anyone can send me the output islands with FDR from running the original SICER on the example data they provide. I seem to remember finding a bug in the original, but cannot be bothered to get SICER running again. (It wasn't critical or anything just giving slightly inaccurate counts for islands.)
