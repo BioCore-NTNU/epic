@@ -5,8 +5,6 @@ from scipy.stats import poisson, rankdata
 def compute_fdr(df, total_chip_reads, total_input_reads, args):
 
     df.to_csv("for_fdr_test.csv", sep=" ")
-    print("total_chip_reads", total_chip_reads)
-    print("total_input_reads", total_input_reads)
 
     total_island_input_reads = df.Input.sum()
 
