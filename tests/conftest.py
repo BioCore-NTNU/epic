@@ -14,19 +14,19 @@ MockNamespace = namedtuple("MockNamespace",
 @pytest.fixture(scope="session", autouse=True)
 def args_200_fast():
     return MockNamespace(25, "hg19", False, 200, 150, False, 3, 1,
-                         ["examples/test.bam"], ["examples/control.bam"])
+                         ["examples/test.bed"], ["examples/control.bed"])
 
 
 @pytest.fixture(scope="session", autouse=True)
 def args_200():
     return MockNamespace(1, "hg19", False, 200, 150, False, 3, 0.05,
-                         ["examples/test.bam"], ["examples/control.bam"])
+                         ["examples/test.bed"], ["examples/control.bed"])
 
 
 @pytest.fixture(scope="session", autouse=True)
 def args_50():
     return MockNamespace(1, "hg19", False, 50, 150, False, 3, 0.05,
-                         ["examples/test.bam"], ["examples/control.bam"])
+                         ["examples/test.bed"], ["examples/control.bed"])
 
 
 @pytest.fixture(scope="session", autouse=True)
