@@ -33,9 +33,11 @@ def write_matrix_files(chip_merged, input_merged, df, args):
         # Create temporary directory for bedgraph files if bigwig was
         # requested without bedgraph
         if args.individual_bigwig and not args.individual_bedgraph:
+            logging.debug("Creating temporary directory for individual bedgraph files")
             tmpdir = TemporaryDirectory(prefix="temp_bedgraph")
             args.individual_bedgraph = tmpdir.name
         if args.bigwig and not args.bedgraph:
+            logging.debug("Creating temporary directory for bedgraph files")
             tmpdir = tmpdir or TemporaryDirectory(prefix="temp_bedgraph")
             args.bedgraph = tmpdir.name
 
@@ -50,6 +52,7 @@ def write_matrix_files(chip_merged, input_merged, df, args):
                 bigwig(filenames, args)
     finally:
         if tmpdir is not None:
+            logging.debug("Deleting temporary directory of bedgraph files")
             tmpdir.cleanup()
 
 def bigwig(filenames, args):
