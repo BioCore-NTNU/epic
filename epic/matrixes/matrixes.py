@@ -1,6 +1,7 @@
 import logging
 from os.path import dirname, join, basename
 from subprocess import call
+from tempfile import TemporaryDirectory()
 
 import pandas as pd
 
@@ -27,16 +28,29 @@ def write_matrix_files(chip_merged, input_merged, df, args):
     matrix = matrix.sort_index(level="Chromosome")
     # TODO: remove out of bounds bins
 
-    if args.individual_bedgraph or args.individual_bigwig:
-        filenames = individual_bedgraphs(matrix, args)
-        if args.individual_bigwig:
-            individual_bigwigs(filenames, args)
+    tmpdir = None
+    try:
+        # Create temporary directory for bedgraph files if bigwig was
+        # requested without bedgraph
+        if args.individual_bigwig and not args.individual_bedgraph:
+            tmpdir = TemporaryDirectory(prefix="temp_bedgraph")
+            args.individual_bedgraph = tmpdir.name
+        if args.bigwig and not args.bedgraph:
+            tmpdir = tmpdir or TemporaryDirectory(prefix="temp_bedgraph")
+            args.bedgraph = tmpdir.name
 
-    if args.bedgraph or args.bigwig:
-        filenames = bedgraph(matrix, args)
-        if args.bigwig:
-            bigwig(filenames, args)
+        if args.individual_bedgraph or args.individual_bigwig:
+            filenames = individual_bedgraphs(matrix, args)
+            if args.individual_bigwig:
+                individual_bigwigs(filenames, args)
 
+        if args.bedgraph or args.bigwig:
+            filenames = bedgraph(matrix, args)
+            if args.bigwig:
+                bigwig(filenames, args)
+    finally:
+        if tmpdir is not None:
+            tmpdir.cleanup()
 
 def bigwig(filenames, args):
 
