@@ -49,7 +49,7 @@ def bigwig(filenames, args):
 
     call("mkdir -p {}".format(args.bigwig), shell=True)
     for infile, outfile in zip(filenames, outfiles):
-        logging.info("Creating bigiwg {}".format(outfile))
+        logging.info("Creating bigwig {}".format(outfile))
         command = "bedGraphToBigWig {} {} {}".format(infile, chromsizes,
                                                      outfile)
         call(command, shell=True)
