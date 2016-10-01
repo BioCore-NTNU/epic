@@ -7,7 +7,6 @@ from os.path import dirname, join, basename
 from sys import stdout
 from itertools import chain
 from collections import OrderedDict
-from subprocess import call
 import logging
 
 import pandas as pd
