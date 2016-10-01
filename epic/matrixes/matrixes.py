@@ -1,6 +1,9 @@
+import os
 import logging
+import re
 from os.path import dirname, join, basename
-from subprocess import call
+from subprocess import check_call
+from tempfile import TemporaryDirectory
 
 import pandas as pd
 
@@ -27,57 +30,67 @@ def write_matrix_files(chip_merged, input_merged, df, args):
     matrix = matrix.sort_index(level="Chromosome")
     # TODO: remove out of bounds bins
 
-    if args.individual_bedgraph or args.individual_bigwig:
-        filenames = individual_bedgraphs(matrix, args)
-        if args.individual_bigwig:
-            individual_bigwigs(filenames, args)
+    tmpdir = None
+    try:
+        # Create temporary directory for bedgraph files if bigwig was
+        # requested without bedgraph
+        if args.individual_bigwig and not args.individual_bedgraph:
+            tmpdir = TemporaryDirectory(prefix="temp_bedgraph")
+            args.individual_bedgraph = tmpdir.name
+        if args.bigwig and not args.bedgraph:
+            tmpdir = tmpdir or TemporaryDirectory(prefix="temp_bedgraph")
+            args.bedgraph = tmpdir.name
+        if tmpdir is not None:
+            logging.debug("Created temporary directory for bedgraph files: {}".format(tmpdir.name))
 
-    if args.bedgraph or args.bigwig:
-        filenames = bedgraph(matrix, args)
-        if args.bigwig:
-            bigwig(filenames, args)
+        if args.individual_bedgraph or args.individual_bigwig:
+            filenames = individual_bedgraphs(matrix, args)
+            if args.individual_bigwig:
+                individual_bigwigs(filenames, args)
 
+        if args.bedgraph or args.bigwig:
+            filenames = bedgraph(matrix, args)
+            if args.bigwig:
+                bigwig(filenames, args)
+    finally:
+        if tmpdir is not None:
+            logging.debug("Deleting temporary directory of bedgraph files")
+            tmpdir.cleanup()
 
 def bigwig(filenames, args):
 
     chromsizes = get_genome_size_file(args.genome)
 
-    outfiles = [
-        f.replace(args.bedgraph, args.bigwig + "/", 1).replace(
-            ".bedgraph", ".bw").replace("//", "/") for f in filenames
-    ]
+    outfiles_rel = ( os.path.relpath(f, args.bedgraph) for f in filenames )
+    outfiles = [ os.path.join(args.bigwig, re.sub("\\.bedgraph$", ".bw", f)) for f in outfiles_rel ]
 
-    call("mkdir -p {}".format(args.bigwig), shell=True)
+    os.makedirs(args.bigwig, exist_ok=True)
     for infile, outfile in zip(filenames, outfiles):
-        logging.info("Creating bigiwg {}".format(outfile))
-        command = "bedGraphToBigWig {} {} {}".format(infile, chromsizes,
-                                                     outfile)
-        call(command, shell=True)
+        logging.info("Creating bigwig {}".format(outfile))
+        command = ["bedGraphToBigWig", infile, chromsizes, outfile]
+        check_call(command)
 
 
 def individual_bigwigs(filenames, args):
 
     chromsizes = get_genome_size_file(args.genome)
 
-    outfiles = [f.replace(args.individual_bedgraph,
-                          args.individual_bigwig + "/",
-                          1).replace(".bedgraph", ".bw").replace("//", "/")
-                for f in filenames]
+    outfiles_rel = ( os.path.relpath(f, args.bedgraph) for f in filenames )
+    outfiles = [ os.path.join(args.bigwig, f) for f in outfiles_rel ]
 
-    call("mkdir -p {}".format(args.individual_bigwig), shell=True)
+    os.makedirs(args.bigwig, exist_ok=True)
     for infile, outfile in zip(filenames, outfiles):
-        command = "bedGraphToBigWig {} {} {}".format(infile, chromsizes,
-                                                     outfile)
         logging.info("Creating bigiwg {}".format(outfile))
-        call(command, shell=True)
+        command = ["bedGraphToBigWig", infile, chromsizes, outfile]
+        check_call(command)
 
 
 def bedgraph(matrix, args):
     "Create a bedgraph file for ChIP and Input."
 
-    outfolder = args.bedgraph or "temp_bedgraph/"
+    outfolder = args.bedgraph
 
-    call("mkdir -p {}".format(outfolder), shell=True)
+    os.makedirs(outfolder, exist_ok=True)
 
     chip_file = join(outfolder, "sum_treatment.bedgraph")
     input_file = join(outfolder, "sum_input.bedgraph")
@@ -121,9 +134,9 @@ def _individual_bedgraphs(matrix, name, outfolder):
 def individual_bedgraphs(matrix, args):
     "Create a bedgraph file for each file used."
 
-    outfolder = args.individual_bedgraph or "temp_individual_bedgraph/"
+    outfolder = args.individual_bedgraph
 
-    call("mkdir -p {}".format(outfolder), shell=True)
+    os.makedirs(outfolder, exist_ok=True)
 
     outfiles = []
     for treatment_file in args.treatment:
@@ -187,7 +200,7 @@ def print_matrixes(matrixes, args):
 
     dir = dirname(outpath)
     if dir:
-        call("mkdir -p {}".format(dir), shell=True)
+        os.makedirs(dir, exist_ok=True)
 
     logging.info("Writing data matrix to file: " + outpath)
     for i, df in enumerate(matrixes):
