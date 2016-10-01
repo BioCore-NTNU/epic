@@ -1,5 +1,6 @@
 import os
 import logging
+import re
 from os.path import dirname, join, basename
 from subprocess import check_call
 from tempfile import TemporaryDirectory
@@ -61,7 +62,7 @@ def bigwig(filenames, args):
     chromsizes = get_genome_size_file(args.genome)
 
     outfiles_rel = ( os.path.relpath(f, args.bedgraph) for f in filenames )
-    outfiles = [ os.path.join(args.bigwig, f) for f in outfiles_rel ]
+    outfiles = [ os.path.join(args.bigwig, re.sub("\\.bedgraph$", ".bw", f)) for f in outfiles_rel ]
 
     os.makedirs(args.bigwig, exist_ok=True)
     for infile, outfile in zip(filenames, outfiles):
