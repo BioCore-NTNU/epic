@@ -66,7 +66,7 @@ def get_effective_genome_length(genome, read_length):
         genome_exact = name_dict[genome.lower()]
         egf = pkg_resources.resource_string(
             "epic", "scripts/effective_sizes/{}_{}.txt".format(
-                genome_exact, read_length)).split()[-1].encode()
+                genome_exact, read_length)).split()[-1].decode()
     except KeyError:
         genome_list = "\n".join(list(name_dict.keys()))
         logging.error(
