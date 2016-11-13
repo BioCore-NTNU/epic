@@ -27,7 +27,7 @@ def get_genome_size_file(genome):
 
 
 def create_genome_size_dict(genome):
-    # type: (str) -> Dict[int]
+    # type: (str) -> Dict[str,int]
     """Creates genome size dict from string containing data."""
 
     size_file = get_genome_size_file(genome)
@@ -55,7 +55,7 @@ def create_genome_size_dict_custom_genome(chromsizes):
 
 
 def get_effective_genome_length(genome, read_length):
-    # type: (str, int) -> int
+    # type: (str, int) -> float
 
     genome_names = pkg_resources.resource_listdir("epic",
                                                   "scripts/effective_sizes")
@@ -64,7 +64,7 @@ def get_effective_genome_length(genome, read_length):
 
     try:
         genome_exact = name_dict[genome.lower()]
-        egf = pkg_resources.resource_string(
+        egf = pkg_resources.resource_string( # type: ignore
             "epic", "scripts/effective_sizes/{}_{}.txt".format(
                 genome_exact, read_length)).split()[-1].decode()
     except KeyError:
