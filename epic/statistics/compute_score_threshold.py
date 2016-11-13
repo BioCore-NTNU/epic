@@ -7,12 +7,11 @@ from epic.statistics.generate_cumulative_distribution import generate_cumulative
 from epic.statistics.add_to_island_expectations import add_to_island_expectations_dict
 
 
-def compute_score_threshold(average_window_readcount: float,
-                            island_enriched_threshold: int,
-                            gap_contribution: float,
-                            boundary_contribution: float,
-                            genome_length_in_bins: float) \
-                            -> float:
+def compute_score_threshold(average_window_readcount,
+                            island_enriched_threshold,
+                            gap_contribution, boundary_contribution,
+                            genome_length_in_bins):
+    # type: (float, int, float, float, float) -> float
     """
     What does island_expectations do?
     """

@@ -28,7 +28,8 @@ from epic.windows.cluster.find_islands import find_islands
 from epic.matrixes.matrixes import write_matrix_files
 
 
-def run_epic(args: Namespace) -> pd.DataFrame:
+def run_epic(args):
+    # type: (Namespace) -> pd.DataFrame
 
     chip_windows = multiple_files_count_reads_in_windows(args.treatment, args)
     input_windows = multiple_files_count_reads_in_windows(args.control, args)
@@ -77,7 +78,8 @@ def run_epic(args: Namespace) -> pd.DataFrame:
     )  # only returns a value to simplify integration tests
 
 
-def df_to_bed(df: pd.DataFrame) -> pd.DataFrame:
+def df_to_bed(df):
+    # type: (pd.DataFrame) -> pd.DataFrame
 
     # '''Chromosome Start End ChIP Input Score Fold_change P FDR
     # chr5 53000 55399 121 13 77.6075622841774 13.655736573980159 6.040968494897508e-92 1.9241805908359603e-91\''
@@ -93,7 +95,8 @@ def df_to_bed(df: pd.DataFrame) -> pd.DataFrame:
 
 
 
-def sum_columns(dfs: Iterable[pd.DataFrame]) -> List[pd.DataFrame]:
+def sum_columns(dfs):
+    # type: (Iterable[pd.DataFrame]) -> List[pd.DataFrame]
 
     new_dfs = []
     for df in dfs:
@@ -106,9 +109,8 @@ def sum_columns(dfs: Iterable[pd.DataFrame]) -> List[pd.DataFrame]:
     return new_dfs
 
 
-def multiple_files_count_reads_in_windows(bed_files: Iterable[str],
-                                          args: Namespace) \
-                                          -> OrderedDict[str, List[pd.DataFrame]]:
+def multiple_files_count_reads_in_windows(bed_files, args):
+    # type: (Iterable[str], Namespace) -> OrderedDict[str, List[pd.DataFrame]]
     """Use count_reads on multiple files and store result in dict.
 
     Untested since does the same thing as count reads."""
@@ -125,7 +127,8 @@ def multiple_files_count_reads_in_windows(bed_files: Iterable[str],
     return bed_windows
 
 
-def _merge_files(windows: Iterable[pd.DataFrame], nb_cpu: int) -> pd.DataFrame:
+def _merge_files(windows, nb_cpu):
+    # type: (Iterable[pd.DataFrame], int) -> pd.DataFrame
     """Merge lists of chromosome bin df chromosome-wise.
 
     windows is an OrderedDict where the keys are files, the values are lists of

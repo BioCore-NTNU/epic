@@ -12,7 +12,8 @@ __author__ = "Endre Bakken Stovner https://github.com/endrebak/"
 __license__ = "MIT"
 
 
-def get_genome_size_file(genome: str) -> str:
+def get_genome_size_file(genome):
+    # type: (str) -> str
 
     genome_names = pkg_resources.resource_listdir("epic", "scripts/chromsizes")
     name_dict = {n.lower().replace(".chromsizes", ""): n for n in genome_names}
@@ -25,7 +26,8 @@ def get_genome_size_file(genome: str) -> str:
         "epic", "scripts/chromsizes/{}".format(genome_exact))
 
 
-def create_genome_size_dict(genome: str) -> Dict[int]:
+def create_genome_size_dict(genome):
+    # type: (str) -> Dict[int]
     """Creates genome size dict from string containing data."""
 
     size_file = get_genome_size_file(genome)
@@ -39,7 +41,8 @@ def create_genome_size_dict(genome: str) -> Dict[int]:
     return size_dict
 
 
-def create_genome_size_dict_custom_genome(chromsizes: str) -> OrderedDict[str, int]:
+def create_genome_size_dict_custom_genome(chromsizes):
+    # type: (str) -> OrderedDict[str, int]
 
     chromosome_lengths = [l.split() for l in open(chromsizes).readlines()]
 
@@ -51,7 +54,8 @@ def create_genome_size_dict_custom_genome(chromsizes: str) -> OrderedDict[str, i
     return od
 
 
-def get_effective_genome_length(genome: str, read_length: int) -> int:
+def get_effective_genome_length(genome, read_length):
+    # type: (str, int) -> int
 
     genome_names = pkg_resources.resource_listdir("epic",
                                                   "scripts/effective_sizes")

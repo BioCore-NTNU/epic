@@ -10,7 +10,8 @@ import pyBigWig
 from joblib import Parallel, delayed
 
 
-def create_bigwigs(matrix: pd.DataFrame, outdir: str, args: Namespace) -> None:
+def create_bigwigs(matrix, outdir, args):
+    # type: (pd.DataFrame, str, Namespace) -> None
     """Create bigwigs from matrix."""
     call("mkdir -p {}".format(outdir), shell=True)
     genome_size_dict = args.chromosome_sizes
@@ -26,12 +27,13 @@ def create_bigwigs(matrix: pd.DataFrame, outdir: str, args: Namespace) -> None:
     Parallel(n_jobs=args.number_cores)(delayed(_create_bigwig)(bed_column, outpath, genome_size_dict) for outpath, bed_column in zip(outpaths, data))
 
 
-def _to_int(l: Iterable[Any]) -> List[int]:
+def _to_int(l):
+    # type: (Iterable[Any]) -> List[int]
     return [int(i) for i in l]
 
 
-def _create_bigwig(bed_column: pd.Series, outpath: str,
-                   genome_size_dict: Dict[str, int]) -> None:
+def _create_bigwig(bed_column, outpath, genome_size_dict):
+    # type: (pd.Series, str, Dict[str, int]) -> None
 
     logging.info("Creating biwgwig " + outpath)
 
@@ -54,8 +56,8 @@ def _create_bigwig(bed_column: pd.Series, outpath: str,
     bw.close()
 
 
-def create_sum_bigwigs(matrix: pd.DataFrame, outdir: str,
-                       args: Namespace) -> None:
+def create_sum_bigwigs(matrix, outdir, args):
+    # type: (pd.DataFrame, str, Namespace) -> None
     call("mkdir -p {}".format(outdir), shell=True)
 
     chip = matrix[args.treatment].sum(axis=1)

@@ -26,9 +26,8 @@ bioc = importr("GenomicRanges")
 
 
 
-def files_to_chromosome_coverage(all_files: Iterable[str],
-                                 nb_cpu: int)\
-                                 -> DefaultDict[str,Dict[str, RObject]]:
+def files_to_chromosome_coverage(all_files, nb_cpu):
+    # type: (Iterable[str], int) -> DefaultDict[str,Dict[str, RObject]]
 
     df_to_coverage = r("function(x) coverage(GRanges(x$Chromosome, IRanges(x$Start, x$End)))")
 

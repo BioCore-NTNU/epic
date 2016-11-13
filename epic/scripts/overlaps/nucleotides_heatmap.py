@@ -31,9 +31,8 @@ __author__ = "Endre Bakken Stovner https://github.com/endrebak/"
 __license__ = "MIT"
 
 
-def nucleotide_overlaps_per_file(all_files: Iterable[str],
-                                 nb_cpu: int) \
-                                 -> pd.DataFrame:
+def nucleotide_overlaps_per_file(all_files, nb_cpu):
+    # type: (Iterable[str], int) -> pd.DataFrame
 
     rles = files_to_chromosome_coverage(all_files, nb_cpu)
 
@@ -44,9 +43,8 @@ def nucleotide_overlaps_per_file(all_files: Iterable[str],
     return pd.concat(nucleotide_overlaps).sort_values(["Main", "Other"]).reset_index(drop=True)
 
 
-def _nucleotide_overlaps_per_file(bed_file: str,
-                                  extended_rles: Dict[str,Dict[str, RObject]]) \
-                                  -> pd.DataFrame:
+def _nucleotide_overlaps_per_file(bed_file, extended_rles):
+    # type: (str, Dict[str,Dict[str, RObject]]) -> pd.DataFrame
 
     base_bed = bed_file.split("/")[-1].split(".")[0]
     logging.info("Finding the number of nucleotides in " + base_bed + " overlapping other files.")

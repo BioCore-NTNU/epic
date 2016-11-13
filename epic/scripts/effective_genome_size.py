@@ -12,8 +12,8 @@ from pyfaidx import Fasta
 from epic.config import logging_settings
 
 
-def effective_genome_size(fasta: str, read_length: int,
-                          nb_cores: int, tmpdir: str="/tmp") -> None:
+def effective_genome_size(fasta, read_length, nb_cores, tmpdir="/tmp"):
+    # type: (str, int, int, str) -> None
     """Compute effective genome size for genome."""
 
     idx = Fasta(fasta)

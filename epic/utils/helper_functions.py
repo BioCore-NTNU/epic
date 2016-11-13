@@ -6,14 +6,13 @@ import pandas as pd
 
 from typing import Iterable, Sequence, Tuple
 try:
-    from functools import lru_cache
+    from functools import lru_cache # type: ignore
 except ImportError:
     from functools32 import lru_cache # type: ignore
 
 
-def _merge_chip_and_input(chip_df: pd.DataFrame,
-                          input_df: pd.DataFrame) \
-                          -> pd.DataFrame:
+def _merge_chip_and_input(chip_df, input_df):
+    # type: (pd.DataFrame, pd.DataFrame) -> pd.DataFrame
 
     chip_df = chip_df.set_index("Chromosome Bin".split())
     input_df = input_df.set_index("Chromosome Bin".split())
@@ -48,10 +47,8 @@ def _merge_chip_and_input(chip_df: pd.DataFrame,
     return merged_df
 
 
-def merge_chip_and_input(chip_dfs: Iterable[pd.DataFrame],
-                         input_dfs: Iterable[pd.DataFrame],
-                         nb_cpu: int) \
-                         -> Sequence[pd.DataFrame]:
+def merge_chip_and_input(chip_dfs, input_dfs, nb_cpu):
+    # type: (Iterable[pd.DataFrame], Iterable[pd.DataFrame], int) -> Sequence[pd.DataFrame]
 
     # should be same length, since missing chromos get empty df
     # assert len(chip_dfs) == len(input_dfs)
@@ -66,13 +63,13 @@ def merge_chip_and_input(chip_dfs: Iterable[pd.DataFrame],
     return merged_chromosome_dfs
 
 
-def get_total_number_of_reads(dfs: Iterable[pd.DataFrame]) -> int:
+def get_total_number_of_reads(dfs):
+    # type: (Iterable[pd.DataFrame]) -> int
     return sum([df.Count.sum() for df in dfs])
 
 
-def ensure_same_chromosomes_in_list(sample1_dfs: List[pd.DataFrame],
-                                    sample2_dfs: List[pd.DataFrame]) \
-                                    -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
+def ensure_same_chromosomes_in_list(sample1_dfs, sample2_dfs):
+    # type: (List[pd.DataFrame], List[pd.DataFrame]) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]
 
     d1 = create_chromsome_df_map(sample1_dfs)
     d2 = create_chromsome_df_map(sample2_dfs)
@@ -84,7 +81,8 @@ def ensure_same_chromosomes_in_list(sample1_dfs: List[pd.DataFrame],
     return d1, d2
 
 
-def create_chromsome_df_map(dfs: Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]:
+def create_chromsome_df_map(dfs):
+    # type: (Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]
 
     sample_dict = {}
     for df in dfs:
@@ -98,8 +96,8 @@ def create_chromsome_df_map(dfs: Iterable[pd.DataFrame]) -> Dict[str, pd.DataFra
     return sample_dict
 
 
-def fill_missing_chromosomes(d1: pd.DataFrame, d2: pd.DataFrame) \
-    -> Tuple[pd.DataFrame, pd.DataFrame]:
+def fill_missing_chromosomes(d1, d2):
+    # type: (pd.DataFrame, pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]
 
     all_chromosomomes = set(d1.keys()).union(d2.keys())
 
@@ -115,10 +113,8 @@ def fill_missing_chromosomes(d1: pd.DataFrame, d2: pd.DataFrame) \
     return d1, d2
 
 
-def merge_same_files(sample1_dfs: List[pd.DataFrame],
-                     sample2_dfs: List[pd.DataFrame],
-                     nb_cpu: int) \
-                     -> List[pd.DataFrame]:
+def merge_same_files(sample1_dfs, sample2_dfs, nb_cpu):
+    # type: (List[pd.DataFrame], List[pd.DataFrame], int) -> List[pd.DataFrame]
 
     # if one list is missing a chromosome, we might pair up the wrong dataframes
     # therefore creating dicts beforehand to ensure they are paired up properly
@@ -135,9 +131,8 @@ def merge_same_files(sample1_dfs: List[pd.DataFrame],
     return merged_chromosome_dfs
 
 
-def _merge_same_files(sample1_df: pd.DataFrame,
-                      sample2_df: pd.DataFrame) \
-                      -> pd.DataFrame:
+def _merge_same_files(sample1_df, sample2_df):
+    # type: (pd.DataFrame, pd.DataFrame) -> pd.DataFrame
 
     merged_df = sample1_df.merge(sample2_df,
                                  how="outer",

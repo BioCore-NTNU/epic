@@ -16,9 +16,8 @@ from epic.config.genomes import get_genome_size_file
 
 
 
-def write_matrix_files(chip_merged: Dict[str, pd.DataFrame],
-                       input_merged: Dict[str, pd.DataFrame],
-                       df: pd.DataFrame, args: Namespace) -> None:
+def write_matrix_files(chip_merged, input_merged, df, args):
+    # type: (Dict[str, pd.DataFrame], Dict[str, pd.DataFrame], pd.DataFrame, Namespace) -> None
 
     matrixes = create_matrixes(chip_merged, input_merged, df, args)
 
@@ -46,12 +45,9 @@ def write_matrix_files(chip_merged: Dict[str, pd.DataFrame],
         create_sum_bigwigs(matrix, args.sum_bigwig, args)
 
 
-def _create_matrixes(chromosome: str,
-                     chip: Dict[str, pd.DataFrame],
-                     input: Dict[str, pd.DataFrame],
-                     islands: pd.DataFrame, chromosome_size: int,
-                     window_size: int) \
-                     -> pd.DataFrame:
+def _create_matrixes(chromosome, chip, input, islands,
+                     chromosome_size, window_size):
+    # type: (str, Dict[str, pd.DataFrame], Dict[str, pd.DataFrame], pd.DataFrame, int, int) -> pd.DataFrame
 
     chip_df = get_chromosome_df(chromosome, chip)
     input_df = get_chromosome_df(chromosome, input)
@@ -75,11 +71,8 @@ def _create_matrixes(chromosome: str,
     return dfm
 
 
-def create_matrixes(chip: Iterable[pd.DataFrame],
-                    input: Iterable[pd.DataFrame],
-                    df: pd.DataFrame, args: Namespace) \
-                    -> List[pd.DataFrame]:
-
+def create_matrixes(chip, input, df, args):
+    # type: (Iterable[pd.DataFrame], Iterable[pd.DataFrame], pd.DataFrame, Namespace) -> List[pd.DataFrame]
     "Creates matrixes which can be written to file as is (matrix) or as bedGraph."
 
     genome = args.chromosome_sizes
@@ -98,8 +91,8 @@ def create_matrixes(chip: Iterable[pd.DataFrame],
     return dfms
 
 
-def print_matrixes(matrixes: Iterable[pd.DataFrame], args: Namespace) -> None:
-
+def print_matrixes(matrixes, args):
+    # type: (Iterable[pd.DataFrame], Namespace) -> None
     outpath = args.store_matrix
 
     dir = dirname(outpath)
@@ -123,10 +116,8 @@ def print_matrixes(matrixes: Iterable[pd.DataFrame], args: Namespace) -> None:
                               chunksize=1e6)
 
 
-def get_island_bins(df: pd.DataFrame, window_size: int,
-                    genome: str,
-                    args: Namespace) \
-                    -> Dict[str, Set[int]]:
+def get_island_bins(df, window_size, genome, args):
+    # type: (pd.DataFrame, int, str, Namespace) -> Dict[str, Set[int]]
     """Finds the enriched bins in a df."""
 
     # need these chromos because the df might not have islands in all chromos
@@ -149,8 +140,8 @@ def get_island_bins(df: pd.DataFrame, window_size: int,
     return chromosome_island_bins
 
 
-def put_dfs_in_dict(dfs: Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]:
-
+def put_dfs_in_dict(dfs):
+    # type: (Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]
     sample_dict = {}
     for df in dfs:
 
@@ -163,8 +154,8 @@ def put_dfs_in_dict(dfs: Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]:
     return sample_dict
 
 
-def put_dfs_in_chromosome_dict(dfs: Iterable[pd.DataFrame]) \
-                               -> Dict[str, pd.DataFrame]:
+def put_dfs_in_chromosome_dict(dfs):
+    # type: (Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]
 
     chromosome_dict = {}        # type: Dict[str, pd.DataFrame]
     for df in dfs:
@@ -178,8 +169,8 @@ def put_dfs_in_chromosome_dict(dfs: Iterable[pd.DataFrame]) \
     return chromosome_dict
 
 
-def get_chromosome_df(chromosome: str, df_dict: Dict[str, pd.DataFrame]) \
-                      -> pd.DataFrame:
+def get_chromosome_df(chromosome, df_dict):
+    # type: (str, Dict[str, pd.DataFrame]) -> pd.DataFrame
 
     if chromosome in df_dict:
         df = df_dict[chromosome]
@@ -189,7 +180,8 @@ def get_chromosome_df(chromosome: str, df_dict: Dict[str, pd.DataFrame]) \
     return df
 
 
-def enriched_bins(df: pd.DataFrame, args: Namespace) -> pd.DataFrame:
+def enriched_bins(df, args):
+    # type: (pd.DataFrame, Namespace) -> pd.DataFrame
 
     df = df.loc[df.FDR < args.false_discovery_rate_cutoff]
 

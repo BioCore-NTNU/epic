@@ -13,7 +13,8 @@ __author__ = "Endre Bakken Stovner https://github.com/endrebak/"
 __license__ = "MIT"
 
 
-def find_readlength(args: Namespace) -> int:
+def find_readlength(args):
+    # type: (Namespace) -> int
     """Estimate length of reads based on 10000 first."""
 
     bed_file = args.treatment[0]
@@ -51,7 +52,8 @@ def find_readlength(args: Namespace) -> int:
     return median_readlength
 
 
-def get_closest_readlength(estimated_readlength: int) -> int:
+def get_closest_readlength(estimated_readlength):
+    # type: (int) -> int
     """Find the predefined readlength closest to the estimated readlength.
 
     In the case of a tie, choose the shortest readlength."""

@@ -7,10 +7,9 @@ from joblib import Parallel, delayed
 import logging
 from typing import List, Sequence
 
-def count_to_pvalue(merged_dfs: Sequence[pd.DataFrame],
-                    island_enriched_threshold: int,
-                    average_window_readcount: float, nb_cpu: int) \
-                    -> List[pd.DataFrame]:
+def count_to_pvalue(merged_dfs, island_enriched_threshold,
+                    average_window_readcount, nb_cpu):
+    # type: (Sequence[pd.DataFrame], int, float, int) -> List[pd.DataFrame]
 
     logging.info("Giving bins poisson score.")
     parallel_count_to_pvalue = partial(_count_to_pvalue, island_enriched_threshold,
@@ -19,10 +18,9 @@ def count_to_pvalue(merged_dfs: Sequence[pd.DataFrame],
                                    for df in merged_dfs)
 
 
-def _count_to_pvalue(island_enriched_threshold: int,
-                     average_window_readcount: float,
-                     df: pd.DataFrame) \
-                     -> pd.DataFrame:
+def _count_to_pvalue(island_enriched_threshold,
+                     average_window_readcount, df):
+    # type: (int, float, pd.DataFrame) -> pd.DataFrame
 
     df = df.loc[df["ChIP"] >= island_enriched_threshold]
     scores = df["ChIP"].apply(

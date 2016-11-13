@@ -8,7 +8,8 @@ import pandas as pd
 from joblib import Parallel, delayed
 
 
-def overlap_matrix_region_counts(all_files: Iterable[str], nb_cpu: int) -> pd.DataFrame:
+def overlap_matrix_region_counts(all_files, nb_cpu):
+    # type: (Iterable[str], int) -> pd.DataFrame
 
     # bargraph
     regions_matrixes = Parallel(n_jobs=nb_cpu)(
@@ -24,7 +25,8 @@ def overlap_matrix_region_counts(all_files: Iterable[str], nb_cpu: int) -> pd.Da
     return regions_df
 
 
-def _create_overlap_matrix_regions(bed_file: str, all_files: Iterable[str]) -> pd.DataFrame:
+def _create_overlap_matrix_regions(bed_file, all_files):
+    # type: (str, Iterable[str]) -> pd.DataFrame
 
     all_files_str = " ".join(all_files)
 
@@ -41,7 +43,8 @@ def _create_overlap_matrix_regions(bed_file: str, all_files: Iterable[str]) -> p
     return df
 
 
-def _compute_region_overlap(df: pd.DataFrame) -> pd.DataFrame:
+def _compute_region_overlap(df):
+    # type: (pd.DataFrame) -> pd.DataFrame
 
     main_file = df.Main.ix[0,0]
 
@@ -54,7 +57,8 @@ def _compute_region_overlap(df: pd.DataFrame) -> pd.DataFrame:
     return nb_overlap
 
 
-def overlap_matrix_regions(all_files: Iterable[str], nb_cpu: int) -> pd.DataFrame:
+def overlap_matrix_regions(all_files, nb_cpu):
+    # type: (Iterable[str], int) -> pd.DataFrame
 
     #heatmap
 

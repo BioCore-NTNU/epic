@@ -2,7 +2,8 @@ import pandas as pd
 from numpy import int32
 from typing import Any, Tuple, Sequence
 
-def merge_chromosome_dfs(df_tuple: Tuple[pd.DataFrame, pd.DataFrame]) -> pd.DataFrame:
+def merge_chromosome_dfs(df_tuple):
+    # type: (Tuple[pd.DataFrame, pd.DataFrame]) -> pd.DataFrame
     """Merges data from the two strands into strand-agnostic counts."""
 
     plus_df, minus_df = df_tuple
@@ -31,7 +32,8 @@ def merge_chromosome_dfs(df_tuple: Tuple[pd.DataFrame, pd.DataFrame]) -> pd.Data
     return df.reset_index(drop=True)
 
 
-def return_other(df: pd.DataFrame, count_column: Any, index_cols: Sequence[Any]) -> pd.DataFrame:
+def return_other(df, count_column, index_cols):
+    # type: (pd.DataFrame, Any, Sequence[Any]) -> pd.DataFrame
 
     df[[count_column, "Bin"]] = df[[count_column, "Bin"]].astype(int32)
     df = df.groupby(index_cols).sum().reset_index()

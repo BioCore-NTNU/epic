@@ -2,8 +2,8 @@ import pandas as pd
 from scipy.stats import poisson, rankdata
 from argparse import Namespace
 
-def compute_fdr(df: pd.DataFrame, total_chip_reads: int,
-                total_input_reads: int, args: Namespace) -> pd.DataFrame:
+def compute_fdr(df, total_chip_reads, total_input_reads, args):
+    # type: (pd.DataFrame, int, int, Namespace) -> pd.DataFrame
 
     total_island_input_reads = df.Input.sum()
 
