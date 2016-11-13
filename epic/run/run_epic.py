@@ -10,9 +10,11 @@ from collections import OrderedDict
 from subprocess import call
 import logging
 
+from argparse import Namespace
 import pandas as pd
 from numpy import log2
 
+from typing import Iterable
 from natsort import natsorted
 from joblib import Parallel, delayed
 
@@ -26,7 +28,7 @@ from epic.windows.cluster.find_islands import find_islands
 from epic.matrixes.matrixes import write_matrix_files
 
 
-def run_epic(args):
+def run_epic(args: Namespace) -> pd.DataFrame:
 
     chip_windows = multiple_files_count_reads_in_windows(args.treatment, args)
     input_windows = multiple_files_count_reads_in_windows(args.control, args)
@@ -46,6 +48,7 @@ def run_epic(args):
     score_threshold, island_enriched_threshold, average_window_readcount = \
         compute_background_probabilities(nb_chip_reads, args)
 
+    dfs = []                    # type: Iterable[pd.DataFrame]
     dfs = count_to_pvalue(merged_dfs, island_enriched_threshold,
                           average_window_readcount, args.number_cores)
 
@@ -74,7 +77,7 @@ def run_epic(args):
     )  # only returns a value to simplify integration tests
 
 
-def df_to_bed(df):
+def df_to_bed(df: pd.DataFrame) -> pd.DataFrame:
 
     # '''Chromosome Start End ChIP Input Score Fold_change P FDR
     # chr5 53000 55399 121 13 77.6075622841774 13.655736573980159 6.040968494897508e-92 1.9241805908359603e-91\''
@@ -90,7 +93,7 @@ def df_to_bed(df):
 
 
 
-def sum_columns(dfs):
+def sum_columns(dfs: Iterable[pd.DataFrame]) -> List[pd.DataFrame]:
 
     new_dfs = []
     for df in dfs:
@@ -103,12 +106,14 @@ def sum_columns(dfs):
     return new_dfs
 
 
-def multiple_files_count_reads_in_windows(bed_files, args):
+def multiple_files_count_reads_in_windows(bed_files: Iterable[str],
+                                          args: Namespace) \
+                                          -> OrderedDict[str, List[pd.DataFrame]]:
     """Use count_reads on multiple files and store result in dict.
 
     Untested since does the same thing as count reads."""
 
-    bed_windows = OrderedDict()
+    bed_windows = OrderedDict() # type: OrderedDict[str, List[pd.DataFrame]]
     for bed_file in bed_files:
         logging.info("Binning " + bed_file)
         if args.paired_end:
@@ -120,7 +125,7 @@ def multiple_files_count_reads_in_windows(bed_files, args):
     return bed_windows
 
 
-def _merge_files(windows, nb_cpu):
+def _merge_files(windows: Iterable[pd.DataFrame], nb_cpu: int) -> pd.DataFrame:
     """Merge lists of chromosome bin df chromosome-wise.
 
     windows is an OrderedDict where the keys are files, the values are lists of

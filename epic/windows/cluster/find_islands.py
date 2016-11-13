@@ -5,8 +5,13 @@ import pandas as pd
 
 from joblib import Parallel, delayed
 
+from typing import Iterable
+from argparse import Namespace
 
-def find_islands(dfs, score_threshold, args):
+def find_islands(dfs: Iterable[pd.DataFrame],
+                 score_threshold: float,
+                 args: Namespace) \
+                 -> Iterable[pd.DataFrame]:
     logging.info("Clustering bins into islands.")
     parallel_find_islands = partial(_find_islands, args.window_size,
                                     args.gaps_allowed, score_threshold)
@@ -15,7 +20,9 @@ def find_islands(dfs, score_threshold, args):
     return clustered_islands
 
 
-def _find_islands(window_size, gaps_allowed, score_threshold, df):
+def _find_islands(window_size: int, gaps_allowed: int,
+                  score_threshold: float, df: pd.DataFrame) \
+                  -> pd.DataFrame:
 
     if df.empty:
         return df

@@ -1,12 +1,15 @@
 from epic.config.constants import E_VALUE, BIN_SIZE
+from typing import Sequence, List
 
 
-def generate_cumulative_dist(island_expectations_d, total_length):
+def generate_cumulative_dist(island_expectations_d: Dict[int, float],
+                             total_length: int) \
+                             -> float:
     """
     Generate cumulative distribution: a list of tuples (bins, hist).
     """
 
-    cumulative = [0] * (total_length + 1)
+    cumulative = [0.0] * (total_length + 1)
     partial_sum = 0.0
 
     island_expectations = []

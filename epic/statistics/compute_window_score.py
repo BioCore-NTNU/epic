@@ -4,7 +4,7 @@ from scipy.stats import poisson
 
 
 @lru_cache()
-def compute_window_score(i, poisson_parameter):
+def compute_window_score(i: int, poisson_parameter: float) -> float:
 
     # No enrichment; poisson param also average
     if i < poisson_parameter:

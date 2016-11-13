@@ -3,6 +3,7 @@ from sys import platform
 from re import search, IGNORECASE
 from io import BytesIO
 from subprocess import check_output
+from argparse import Namespace
 
 import pandas as pd
 
@@ -12,7 +13,7 @@ __author__ = "Endre Bakken Stovner https://github.com/endrebak/"
 __license__ = "MIT"
 
 
-def find_readlength(args):
+def find_readlength(args: Namespace) -> int:
     """Estimate length of reads based on 10000 first."""
 
     bed_file = args.treatment[0]
@@ -50,7 +51,7 @@ def find_readlength(args):
     return median_readlength
 
 
-def get_closest_readlength(estimated_readlength):
+def get_closest_readlength(estimated_readlength: int) -> int:
     """Find the predefined readlength closest to the estimated readlength.
 
     In the case of a tie, choose the shortest readlength."""

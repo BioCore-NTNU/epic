@@ -1,7 +1,9 @@
 from fnmatch import fnmatch
+from typing import Iterable, Sequence, Tuple
 
-
-def separate_input_and_chip_infiles(bed_files, input_pattern="input"):
+def separate_input_and_chip_infiles(bed_files: Iterable,
+                                    input_pattern: str="input") \
+                                    -> Tuple[Sequence[str], Sequence[str]]:
     """Split list of files depending on whether name contains input_pattern.
 
     Since docopt cannot take two lists of variadic arguments, splitting it

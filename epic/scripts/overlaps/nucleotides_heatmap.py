@@ -4,6 +4,7 @@ from joblib import Parallel, delayed
 from collections import defaultdict
 import pandas as pd
 import numpy as np
+from typing import Dict, Iterable
 
 import pkg_resources, os
 from natsort import natsorted
@@ -15,6 +16,7 @@ from io import StringIO
 import logging
 from rpy2.robjects import r, pandas2ri
 pandas2ri.activate()
+from rpy2.robjects.robject import RObject
 
 from rpy2.robjects.packages import importr
 importr("S4Vectors")
@@ -29,7 +31,9 @@ __author__ = "Endre Bakken Stovner https://github.com/endrebak/"
 __license__ = "MIT"
 
 
-def nucleotide_overlaps_per_file(all_files, nb_cpu):
+def nucleotide_overlaps_per_file(all_files: Iterable[str],
+                                 nb_cpu: int) \
+                                 -> pd.DataFrame:
 
     rles = files_to_chromosome_coverage(all_files, nb_cpu)
 
@@ -40,7 +44,9 @@ def nucleotide_overlaps_per_file(all_files, nb_cpu):
     return pd.concat(nucleotide_overlaps).sort_values(["Main", "Other"]).reset_index(drop=True)
 
 
-def _nucleotide_overlaps_per_file(bed_file, extended_rles):
+def _nucleotide_overlaps_per_file(bed_file: str,
+                                  extended_rles: Dict[str,Dict[str, RObject]]) \
+                                  -> pd.DataFrame:
 
     base_bed = bed_file.split("/")[-1].split(".")[0]
     logging.info("Finding the number of nucleotides in " + base_bed + " overlapping other files.")

@@ -8,6 +8,7 @@ the faster version.
 """
 
 from __future__ import print_function
+from argparse import Namespace
 
 import logging
 
@@ -17,7 +18,7 @@ from epic.statistics.compute_score_threshold import compute_score_threshold
 
 
 # @MEMORY.cache(verbose=0)
-def compute_background_probabilities(total_chip_count, args):
+def compute_background_probabilities(total_chip_count: int, args: Namespace):
 
     effective_genome_size = args.effective_genome_size
     logging.debug(str(effective_genome_size) + " effective_genome_size")

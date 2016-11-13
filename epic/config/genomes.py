@@ -2,6 +2,7 @@ from natsort import natsorted
 from collections import OrderedDict
 import pkg_resources
 import logging
+from typimg import Dict
 
 from epic.config import logging_settings
 from epic.utils.find_readlength import (find_readlength,
@@ -11,7 +12,7 @@ __author__ = "Endre Bakken Stovner https://github.com/endrebak/"
 __license__ = "MIT"
 
 
-def get_genome_size_file(genome):
+def get_genome_size_file(genome: str) -> str:
 
     genome_names = pkg_resources.resource_listdir("epic", "scripts/chromsizes")
     name_dict = {n.lower().replace(".chromsizes", ""): n for n in genome_names}
@@ -24,7 +25,7 @@ def get_genome_size_file(genome):
         "epic", "scripts/chromsizes/{}".format(genome_exact))
 
 
-def create_genome_size_dict(genome):
+def create_genome_size_dict(genome: str) -> Dict[int]:
     """Creates genome size dict from string containing data."""
 
     size_file = get_genome_size_file(genome)
@@ -38,11 +39,11 @@ def create_genome_size_dict(genome):
     return size_dict
 
 
-def create_genome_size_dict_custom_genome(chromsizes):
+def create_genome_size_dict_custom_genome(chromsizes: str) -> OrderedDict[str, int]:
 
     chromosome_lengths = [l.split() for l in open(chromsizes).readlines()]
 
-    od = OrderedDict()
+    od = OrderedDict()          # type: OrderedDict[str, int]
 
     for c, l in natsorted(chromosome_lengths):
         od[c] = int(l)
@@ -50,7 +51,7 @@ def create_genome_size_dict_custom_genome(chromsizes):
     return od
 
 
-def get_effective_genome_length(genome, read_length):
+def get_effective_genome_length(genome: str, read_length: int) -> int:
 
     genome_names = pkg_resources.resource_listdir("epic",
                                                   "scripts/effective_sizes")
@@ -61,7 +62,7 @@ def get_effective_genome_length(genome, read_length):
         genome_exact = name_dict[genome.lower()]
         egf = pkg_resources.resource_string(
             "epic", "scripts/effective_sizes/{}_{}.txt".format(
-                genome_exact, read_length)).split()[-1].decode()
+                genome_exact, read_length)).split()[-1].encode()
     except KeyError:
         genome_list = "\n".join(list(name_dict.keys()))
         logging.error(

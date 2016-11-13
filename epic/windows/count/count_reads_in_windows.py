@@ -3,6 +3,8 @@ from io import BytesIO
 from itertools import product
 from logging import info
 from subprocess import check_output, Popen, PIPE
+from typing import Any, Iterable, Tuple
+from argparse import Namespace
 
 import pandas as pd
 from joblib import Parallel, delayed
@@ -14,7 +16,7 @@ from epic.windows.count.merge_chromosome_dfs import merge_chromosome_dfs
 from epic.windows.count.remove_out_of_bounds_bins import remove_out_of_bounds_bins
 
 
-def _options(bed_file, keep_duplicates):
+def _options(bed_file: str, keep_duplicates: bool) -> Tuple[str, str]:
 
     if not keep_duplicates:
         duplicate_handling = " uniq | "
@@ -31,7 +33,7 @@ def _options(bed_file, keep_duplicates):
     return grep, duplicate_handling
 
 
-def count_reads_in_windows(bed_file, args):
+def count_reads_in_windows(bed_file: str, args: Namespace) -> List[pd.DataFrame]:
 
     chromosome_size_dict = args.chromosome_sizes
     chromosomes = natsorted(list(chromosome_size_dict.keys()))
@@ -56,8 +58,9 @@ def count_reads_in_windows(bed_file, args):
     return merged_chromosome_dfs
 
 
-def _count_reads_in_windows(bed_file, args, chromosome_size, chromosome,
-                            strand):
+def _count_reads_in_windows(bed_file: str, args: Namespace,
+                            chromosome_size: int, chromosome: str,
+                            strand: str) -> pd.DataFrame:
 
     halved_fragment_size = args.fragment_size // 2
     idx = 1 if strand == "+" else 2  # fragment start indices
@@ -95,7 +98,7 @@ def _count_reads_in_windows(bed_file, args, chromosome_size, chromosome,
     return out_table
 
 
-def count_reads_in_windows_paired_end(bed_file, args):
+def count_reads_in_windows_paired_end(bed_file: str, args: Namespace) -> List[pd.DataFrame]:
 
     chromosome_size_dict = args.chromosome_sizes
     chromosomes = natsorted(list(chromosome_size_dict.keys()))
@@ -113,8 +116,10 @@ def count_reads_in_windows_paired_end(bed_file, args):
     return chromosome_dfs
 
 
-def _count_reads_in_windows_paired_end(bed_file, keep_duplicates,
-                                       chromosome_size, chromosome):
+def _count_reads_in_windows_paired_end(bed_file: str,
+                                       keep_duplicates: bool,
+                                       chromosome_size: int,
+                                       chromosome: str) -> pd.DataFrame:
 
     grep, duplicate_handling = _options(bed_file, keep_duplicates)
 
@@ -150,6 +155,6 @@ def _count_reads_in_windows_paired_end(bed_file, keep_duplicates,
     return out_table
 
 
-def _pairwise(iterable):
+def _pairwise(iterable: Iterable[Any]) -> Iterable[Tuple[Any, Any]]:
     col = iter(iterable)
     return zip(col, col)

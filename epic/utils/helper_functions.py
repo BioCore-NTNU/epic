@@ -4,13 +4,16 @@ from natsort import natsorted
 from joblib import Parallel, delayed
 import pandas as pd
 
+from typing import Iterable, Sequence, Tuple
 try:
     from functools import lru_cache
 except ImportError:
-    from functools32 import lru_cache
+    from functools32 import lru_cache # type: ignore
 
 
-def _merge_chip_and_input(chip_df, input_df):
+def _merge_chip_and_input(chip_df: pd.DataFrame,
+                          input_df: pd.DataFrame) \
+                          -> pd.DataFrame:
 
     chip_df = chip_df.set_index("Chromosome Bin".split())
     input_df = input_df.set_index("Chromosome Bin".split())
@@ -39,13 +42,16 @@ def _merge_chip_and_input(chip_df, input_df):
             merged_df.head().to_csv(sep=" "), "Tail of merged df: ",
             merged_df.tail().to_csv(sep=" ")
         ]
-        assertion_message = "\n".join(assertion_message)
+        assertion_message = "\n".join(assertion_message) # type: ignore
         assert len(merged_df) == chip_df_nb_bins, assertion_message
 
     return merged_df
 
 
-def merge_chip_and_input(chip_dfs, input_dfs, nb_cpu):
+def merge_chip_and_input(chip_dfs: Iterable[pd.DataFrame],
+                         input_dfs: Iterable[pd.DataFrame],
+                         nb_cpu: int) \
+                         -> Sequence[pd.DataFrame]:
 
     # should be same length, since missing chromos get empty df
     # assert len(chip_dfs) == len(input_dfs)
@@ -60,11 +66,13 @@ def merge_chip_and_input(chip_dfs, input_dfs, nb_cpu):
     return merged_chromosome_dfs
 
 
-def get_total_number_of_reads(dfs):
+def get_total_number_of_reads(dfs: Iterable[pd.DataFrame]) -> int:
     return sum([df.Count.sum() for df in dfs])
 
 
-def ensure_same_chromosomes_in_list(sample1_dfs, sample2_dfs):
+def ensure_same_chromosomes_in_list(sample1_dfs: List[pd.DataFrame],
+                                    sample2_dfs: List[pd.DataFrame]) \
+                                    -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
 
     d1 = create_chromsome_df_map(sample1_dfs)
     d2 = create_chromsome_df_map(sample2_dfs)
@@ -76,7 +84,7 @@ def ensure_same_chromosomes_in_list(sample1_dfs, sample2_dfs):
     return d1, d2
 
 
-def create_chromsome_df_map(dfs):
+def create_chromsome_df_map(dfs: Iterable[pd.DataFrame]) -> Dict[str, pd.DataFrame]:
 
     sample_dict = {}
     for df in dfs:
@@ -90,7 +98,8 @@ def create_chromsome_df_map(dfs):
     return sample_dict
 
 
-def fill_missing_chromosomes(d1, d2):
+def fill_missing_chromosomes(d1: pd.DataFrame, d2: pd.DataFrame) \
+    -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     all_chromosomomes = set(d1.keys()).union(d2.keys())
 
@@ -106,24 +115,29 @@ def fill_missing_chromosomes(d1, d2):
     return d1, d2
 
 
-def merge_same_files(sample1_dfs, sample2_dfs, nb_cpu):
+def merge_same_files(sample1_dfs: List[pd.DataFrame],
+                     sample2_dfs: List[pd.DataFrame],
+                     nb_cpu: int) \
+                     -> List[pd.DataFrame]:
 
     # if one list is missing a chromosome, we might pair up the wrong dataframes
     # therefore creating dicts beforehand to ensure they are paired up properly
-    sample1_dfs, sample2_dfs = ensure_same_chromosomes_in_list(sample1_dfs,
-                                                               sample2_dfs)
+    d1, d2 = ensure_same_chromosomes_in_list(sample1_dfs,
+                                             sample2_dfs)
 
-    assert len(sample1_dfs) == len(sample2_dfs)
+    assert len(d1) == len(d2)
 
     logging.info("Merging same class data.")
     merged_chromosome_dfs = Parallel(n_jobs=nb_cpu)(delayed(_merge_same_files)(
-        sample1_dfs[chromosome],
-        sample2_dfs[chromosome]) for chromosome in sample1_dfs.keys())
+        d1[chromosome],
+        d2[chromosome]) for chromosome in d1.keys())
 
     return merged_chromosome_dfs
 
 
-def _merge_same_files(sample1_df, sample2_df):
+def _merge_same_files(sample1_df: pd.DataFrame,
+                      sample2_df: pd.DataFrame) \
+                      -> pd.DataFrame:
 
     merged_df = sample1_df.merge(sample2_df,
                                  how="outer",

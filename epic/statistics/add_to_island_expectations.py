@@ -3,13 +3,19 @@ BIN_SIZE = 0.001
 E_VALUE = 1000
 E_VALUE_THRESHOLD = E_VALUE * .0000001
 
+from typing import Sequence
+
 from epic.statistics.compute_window_score import compute_window_score
 from epic.statistics.compute_poisson import _poisson
 
 
 def add_to_island_expectations_dict(
-        average_window_readcount, current_max_scaled_score,
-        island_eligibility_threshold, island_expectations, gap_contribution):
+        average_window_readcount: float,
+        current_max_scaled_score: int,
+        island_eligibility_threshold: float,
+        island_expectations: Dict[int, float],
+        gap_contribution: float) \
+        -> Dict[int, float]:
     """Can probably be heavily optimized.
     Time required to run can be seen from logging info."""
 
