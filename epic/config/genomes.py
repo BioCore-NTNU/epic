@@ -2,7 +2,7 @@ from natsort import natsorted
 from collections import OrderedDict
 import pkg_resources
 import logging
-from typimg import Dict
+from typing import Dict
 
 from epic.config import logging_settings
 from epic.utils.find_readlength import (find_readlength,
