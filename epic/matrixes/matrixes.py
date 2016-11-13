@@ -124,7 +124,8 @@ def print_matrixes(matrixes: Iterable[pd.DataFrame], args: Namespace) -> None:
 
 
 def get_island_bins(df: pd.DataFrame, window_size: int,
-                    genome: str) \
+                    genome: str,
+                    args: Namespace) \
                     -> Dict[str, Set[int]]:
     """Finds the enriched bins in a df."""
 
